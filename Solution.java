@@ -4,43 +4,7 @@ import java.util.*;
 import static java.lang.Math.*;
 
 public class Solution implements Runnable {
-	
-	int[] stupidConvolution(int x[], int h[]) {
-		int n = x.length, m = h.length;
-		int y[] = new int[n+m-1];
-		for (int i = 0; i < y.length; i++) {
-			for (int j = max(0,i-n+1); j <= min(i,m-1); j++) {
-				y[i] += h[j]*x[i-j];
-			}
-		}
-		return y;
-	}
-	
-	class Complex {
-		double im, re;
-		Complex(double angle) {
-			re = cos(angle);
-			im = sin(angle);
-		}
-		Complex(double re, double im) {
-			this.im = im;
-			this.re = re;
-		}
-		Complex mult(Complex a) {
-			return new Complex(re*a.re - im*a.im, im*a.re + re*a.im);
-		}
-		Complex add(Complex a) {
-			return new Complex(re+a.re, im+a.im);
-		}
-		Complex sub(Complex a) {
-			return new Complex(re-a.re, im-a.im);
-		}
-		@Override 
-		public String toString() {
-			return "(" + re + "," + im + ")";
-		}
-	}
-	
+		
 	Complex[] fft(Complex a[], boolean inverse) {		
 		int n = a.length;		
 		int log = 0;
@@ -59,7 +23,7 @@ public class Solution implements Runnable {
 				if(inverse) {
 					angle *= -1;
 				}
-				Complex w0 = new Complex(angle), w = new Complex(1,0);
+				Complex w0 = Complex.WithAngle(angle), w = new Complex(1,0);
 				for (int i = 0; i < len/2; i++) {
 					Complex t = r[shift+i+len/2].mult(w);
 					Complex c = r[shift+i];
@@ -163,9 +127,15 @@ public class Solution implements Runnable {
 		
 		return y;
 	}
+		
+	ArrayList<ConvolutionCalculator> algos = new ArrayList<ConvolutionCalculator>();
 	
 	void solve() throws Throwable {
-		while(test(1+rnd.nextInt(1000),1+rnd.nextInt(1000)));
+	
+		algos.add(new StupidConvolutionCalculator());
+		algos.add(new PowerOf3ConvolutionCalculator());
+		
+		//while(test(1+rnd.nextInt(1000),1+rnd.nextInt(1000)));
 		
 		int m = readInt();
 		int h[] = new int[m];
@@ -177,34 +147,38 @@ public class Solution implements Runnable {
 		for (int i = 0; i < n; i++) {
 			x[i] = readInt();
 		}
-		int y1[] = stupidConvolution(x,h);
-		int y2[] = simpleFFTConvolution(x,h);
-		int y3[] = partitionedFFTConvolution(x, h);
+	
+		int algoCnt = algos.size();
+		int[][] y = new int[algoCnt][];
 		
-		if(Arrays.equals(y1, y2) && Arrays.equals(y2,y3)) {
-			out.println("success");
+		for (int i = 0; i < algoCnt; i++) {
+			y[i] = algos.get(i).convolution(x, h);
+		}
+		
+		boolean fail = false;		
+		
+		for (int i = 0; i < algoCnt-1; i++) {
+			if(!Arrays.equals(y[i], y[i+1])) {
+				fail = true;
+				break;
+			}
+		}
+		if(fail) {
+			out.println("fail");			
 		} else {
-			out.println("fail");
+			out.println("success");
 		}
-		
-		for(int v : y1) {
-			out.print(v + " ");
+		for (int i = 0; i < algoCnt; i++) {
+			for(int v : y[i]) {
+				out.print(v + " ");				
+			}
+			out.println();
 		}
-		out.println();
-		
-		for(int v : y2) {
-			out.print(v + " ");
-		}		
-		out.println();
-		
-		for(int v : y3) {
-			out.print(v + " ");
-		}/**/
 	}
 	
 	Random rnd = new Random();
 	
-	boolean test(int m, int n) {
+	/*boolean test(int m, int n) {
 		
 		int h[] = new int[m];
 		for (int i = 0; i < m; i++) {
@@ -248,7 +222,7 @@ public class Solution implements Runnable {
 			}
 			return false;
 		}		
-	}
+	}/**/
 	
 ///////////////////////////////////////
 	final boolean ONLINE_JUDGE = System.getProperty("ONLINE_JUDGE") != null;
