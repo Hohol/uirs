@@ -60,7 +60,7 @@ public class Solution implements Runnable {
 		return r;/**/
 	}
 	
-	int[] simpleFFTConvolution(int x[], int h[]) {
+	int[] simpleFFTConvolution(int x[], int h[]) {		
 		int n = x.length, m = h.length;
 		int y[] = new int[n+m-1];
 		
@@ -130,8 +130,11 @@ public class Solution implements Runnable {
 		
 	ArrayList<ConvolutionCalculator> algos = new ArrayList<ConvolutionCalculator>();
 	
-	void solve() throws Throwable {
-	
+	void solve() throws Throwable {		
+//		GammaCode a = new GammaCode(new Complex(2,0));
+//		a = a.sqr();
+//		out.println(-(a.x+a.y)/2);
+		
 		algos.add(new StupidConvolutionCalculator());
 		algos.add(new PowerOf3ConvolutionCalculator());
 		
