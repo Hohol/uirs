@@ -4,8 +4,70 @@ import java.util.*;
 import static java.lang.Math.*;
 
 public class Solution implements Runnable {
+
+	void solve() throws Throwable {		
 		
+		/*Integer[] a = new Integer[27];
+		for(int i = 0; i < a.length; i++) {
+			a[i] = i;
+		}
+		new PowerOf3ConvolutionCalculator().digitReversePermutation(a, 3);
+		for(int v : a) {
+			out.println(v + " ");
+		}
+		out.println();/**/
+		
+		algos.add(new StupidConvolutionCalculator());
+		algos.add(new PowerOf3ConvolutionCalculator());
+		
+		//while(test(1+rnd.nextInt(1000),1+rnd.nextInt(1000)));
+		
+		int m = readInt();
+		int h[] = new int[m];
+		for (int i = 0; i < m; i++) {
+			h[i] = readInt();
+		}
+		int n = readInt();
+		int x[] = new int[n];
+		for (int i = 0; i < n; i++) {
+			x[i] = readInt();
+		}
+	
+		int algoCnt = algos.size();
+		int[][] y = new int[algoCnt][];
+		
+		for (int i = 0; i < algoCnt; i++) {
+			y[i] = algos.get(i).convolution(x, h);
+		}
+		
+		boolean fail = false;		
+		
+		for (int i = 0; i < algoCnt-1; i++) {
+			if(!Arrays.equals(y[i], y[i+1])) {
+				fail = true;
+				break;
+			}
+		}
+		if(fail) {
+			out.println("fail");			
+		} else {
+			out.println("success");
+		}
+		for (int i = 0; i < algoCnt; i++) {
+			for(int v : y[i]) {
+				out.print(v + " ");				
+			}
+			out.println();
+		}
+	}
+	
+	
+	
+	
 	Complex[] fft(Complex a[], boolean inverse) {		
+		
+		
+		
 		int n = a.length;		
 		int log = 0;
 		while(((1<<log) & n) == 0) {
@@ -18,12 +80,13 @@ public class Solution implements Runnable {
 		}		
 		for(int s = 1; s <= log; s++) {
 			int len = 1<<s;
+			double angle = 2*PI/len;
+			if(inverse) {
+				angle *= -1;
+			}
+			Complex w0 = Complex.WithAngle(angle);
 			for(int shift = 0; shift < n; shift += len) {
-				double angle = 2*PI/len;
-				if(inverse) {
-					angle *= -1;
-				}
-				Complex w0 = Complex.WithAngle(angle), w = new Complex(1,0);
+				Complex w = new Complex(1,0);
 				for (int i = 0; i < len/2; i++) {
 					Complex t = r[shift+i+len/2].mult(w);
 					Complex c = r[shift+i];
@@ -130,54 +193,7 @@ public class Solution implements Runnable {
 		
 	ArrayList<ConvolutionCalculator> algos = new ArrayList<ConvolutionCalculator>();
 	
-	void solve() throws Throwable {		
-//		GammaCode a = new GammaCode(new Complex(2,0));
-//		a = a.sqr();
-//		out.println(-(a.x+a.y)/2);
-		
-		algos.add(new StupidConvolutionCalculator());
-		algos.add(new PowerOf3ConvolutionCalculator());
-		
-		//while(test(1+rnd.nextInt(1000),1+rnd.nextInt(1000)));
-		
-		int m = readInt();
-		int h[] = new int[m];
-		for (int i = 0; i < m; i++) {
-			h[i] = readInt();
-		}
-		int n = readInt();
-		int x[] = new int[n];
-		for (int i = 0; i < n; i++) {
-			x[i] = readInt();
-		}
 	
-		int algoCnt = algos.size();
-		int[][] y = new int[algoCnt][];
-		
-		for (int i = 0; i < algoCnt; i++) {
-			y[i] = algos.get(i).convolution(x, h);
-		}
-		
-		boolean fail = false;		
-		
-		for (int i = 0; i < algoCnt-1; i++) {
-			if(!Arrays.equals(y[i], y[i+1])) {
-				fail = true;
-				break;
-			}
-		}
-		if(fail) {
-			out.println("fail");			
-		} else {
-			out.println("success");
-		}
-		for (int i = 0; i < algoCnt; i++) {
-			for(int v : y[i]) {
-				out.print(v + " ");				
-			}
-			out.println();
-		}
-	}
 	
 	Random rnd = new Random();
 	
